@@ -3,6 +3,7 @@ package com.weather.bigdata.it.utils.hdfsUtil
 import java.io.{FileSystem => _, _}
 import java.net.URI
 
+import com.weather.bigdata.it.utils.PropertiesUtil
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs._
 

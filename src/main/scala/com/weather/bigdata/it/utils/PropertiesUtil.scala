@@ -1,4 +1,4 @@
-package com.weather.bigdata.it.utils.hdfsUtil
+package com.weather.bigdata.it.utils
 
 import org.apache.log4j.Logger
 

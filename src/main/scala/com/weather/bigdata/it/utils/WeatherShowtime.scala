@@ -21,10 +21,12 @@ class WeatherShowtime {
   }
   private def showDateStrOut0(modelName: String, begin: Long, end: Long): Unit ={
     val strs=this.showDateStr(modelName, begin, end)
-    println(strs)
+    PropertiesUtil.log.info(strs)
+    //    println(strs)
   }
   def showDateStrOut1(modelName: String, begin: Long, end: Long,confStr:String): Unit ={
-    println(this.showDateStr(modelName,begin,end)+";配置参数:"+confStr)
+    PropertiesUtil.log.info(this.showDateStr(modelName, begin, end) + ";配置参数:" + confStr)
+    //    println(this.showDateStr(modelName,begin,end)+";配置参数:"+confStr)
   }
   def showDateStrOut1(modelName: String, begin: Long, end: Long): Unit ={
     this.showDateStrOut1(modelName, begin, end,"")
