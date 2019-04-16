@@ -1,5 +1,7 @@
 package com.weather.bigdata.it.utils.operation
 
+import com.weather.bigdata.it.utils.PropertiesUtil
+
 import scala.collection.mutable
 
 object MapOperation {
@@ -22,7 +24,8 @@ object MapOperation {
     })
     if(hashmap0.isEmpty){
       val msg="检查hashmap转换后为空"
-      println(msg)
+      //      println(msg)
+      PropertiesUtil.log.info(msg)
     }
     hashmap0
   }

@@ -15,7 +15,8 @@ object ShowUtil {
       print("args("+i+")="+arr(i)+";")
     }
     println()*/
-    println(this.ArrayShowStr(arr))
+    //    println(this.ArrayShowStr(arr))
+    PropertiesUtil.log.info(this.ArrayShowStr(arr))
   }
   def ArrayShowStr(arr:Array[String]):String={
     var str=""

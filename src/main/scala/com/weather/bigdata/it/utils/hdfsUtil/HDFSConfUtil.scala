@@ -8,6 +8,15 @@ import org.apache.log4j.Logger
 
 object HDFSConfUtil {
   private val log:Logger=Logger.getRootLogger
+
+  def formatFilename (filename0: String): String = {
+    if (HDFSConfUtil.isLocal(filename0) && !filename0.startsWith("file://")) {
+      "file://" + filename0
+    } else {
+      filename0
+    }
+  }
+
   def isLocal(filepath:Path): Boolean ={
     val uri=filepath.toUri
     val flag = this.isLocal(uri)

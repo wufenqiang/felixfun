@@ -1,5 +1,7 @@
 package com.weather.bigdata.it.utils.operation
 
+import com.weather.bigdata.it.utils.PropertiesUtil
+
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -43,7 +45,8 @@ private class ArrayOperation {
       }
       result
     }else{
-      println("eachMinus接口输入错误,arr0.length!=arr1.length")
+      val msg = "eachMinus接口输入错误,arr0.length!=arr1.length"
+      PropertiesUtil.log.error(msg)
       arr0
     }
   }
@@ -452,7 +455,8 @@ private class ArrayOperation {
 
     if(arrLen!=resultMap.reduce((x,y)=>(x._1,x._2+y._2))._2){
       val msg="GroupMap分块出错。"
-      println(msg)
+      PropertiesUtil.log.error(msg)
+      //      println(msg)
     }
 
 

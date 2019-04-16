@@ -8,6 +8,7 @@
         <scala.version>2.11.8</scala.version>
         <fast.json.version>1.2.20</fast.json.version>
         <hadoop.version>2.6.5</hadoop.version>
+        <log4j.version>1.2.17</log4j.version>
         <!--<commons.lang3.version>3.1</commons.lang3.version>-->
     </properties>
 
@@ -46,6 +47,12 @@
             <scope>test</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -116,38 +123,38 @@
             <!--</plugin>-->
 
 
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-jar-plugin</artifactId>-->
-            <!--<configuration>-->
-            <!--<archive>-->
-            <!--<manifest>-->
-            <!--<addClasspath>true</addClasspath>-->
-            <!--&lt;!&ndash;<classpathPrefix>${artifactId}_libs/</classpathPrefix>&ndash;&gt;-->
-            <!--<mainClass>com.weather.bigdata.it.utils.hdfsUtil.HDFSFile</mainClass>-->
-            <!--</manifest>-->
-            <!--</archive>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
-            <!--&lt;!&ndash;将依赖包复制出&ndash;&gt;-->
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-dependency-plugin</artifactId>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<id>copy-dependencies</id>-->
-            <!--<phase>prepare-package</phase>-->
-            <!--<goals>-->
-            <!--<goal>copy-dependencies</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<outputDirectory>-->
-            <!--${project.build.directory}/${artifactId}_libs/-->
-            <!--</outputDirectory>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>${artifactId}_libs/</classpathPrefix>
+                            <mainClass>com.weather.bigdata.it.utils.hdfsUtil.HDFSReadWriteUtil</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!--将依赖包复制出-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/${artifactId}_libs/
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
 
             <!--将依赖注入jar包内-->

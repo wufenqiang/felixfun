@@ -10,13 +10,13 @@ import scala.collection.mutable.ListBuffer
 
 
 object HDFSOperation1 {
-
-
   class pathfilter extends MyPathFilterInterface{
     override def accept(path: Path): Boolean = true
   }
 
-  def listChildrenAbsoluteFile(filename : String, holder:ListBuffer[String] = new ListBuffer[String],mypathfilter:MyPathFilterInterface=new pathfilter): ListBuffer[String] ={
+
+  def listChildrenAbsoluteFile (filename0: String, holder: ListBuffer[String] = new ListBuffer[String], mypathfilter: MyPathFilterInterface = new pathfilter): ListBuffer[String] = {
+    val filename = HDFSConfUtil.formatFilename(filename0)
 
     val uri=URI.create(filename)
     val path=new Path(uri)
@@ -34,7 +34,9 @@ object HDFSOperation1 {
       mypathfilter.accept(new Path(URI.create(p)))
     })
   }
-  def listChildrenAbsoluteFilePath(filename : String, holder:ListBuffer[Path] = new ListBuffer[Path],mypathfilter:MyPathFilterInterface=new pathfilter): ListBuffer[Path] ={
+
+  def listChildrenAbsoluteFilePath (filename0: String, holder: ListBuffer[Path] = new ListBuffer[Path], mypathfilter: MyPathFilterInterface = new pathfilter): ListBuffer[Path] = {
+    val filename = HDFSConfUtil.formatFilename(filename0)
 
     val uri=URI.create(filename)
     val path=new Path(uri)
@@ -53,7 +55,9 @@ object HDFSOperation1 {
     })
   }
 
-  def isDir(filename:String):Boolean={
+  def isDir (filename0: String): Boolean = {
+    val filename = HDFSConfUtil.formatFilename(filename0)
+
 
     val uri=URI.create(filename)
     val path=new Path(uri)
@@ -73,7 +77,10 @@ object HDFSOperation1 {
     fs.close()
     flag
   }
-  def isFile(filename:String):Boolean={
+
+  def isFile (filename0: String): Boolean = {
+    val filename = HDFSConfUtil.formatFilename(filename0)
+
 
     val uri = URI.create(filename)
     val path = new Path(uri)
@@ -94,7 +101,9 @@ object HDFSOperation1 {
     flag
   }
 
-  def exists(filename:String): Boolean ={
+  def exists (filename0: String): Boolean = {
+    val filename = HDFSConfUtil.formatFilename(filename0)
+
     val uri=URI.create(filename)
     val path=new Path(uri)
     val conf=HDFSConfUtil.getConf(filename)
@@ -102,7 +111,9 @@ object HDFSOperation1 {
     fs.exists(path)
   }
 
-  def createFile(filename:String): Boolean ={
+  def createFile (filename0: String): Boolean = {
+    val filename = HDFSConfUtil.formatFilename(filename0)
+
     val uri=URI.create(filename)
     val path=new Path(uri)
     val conf=HDFSConfUtil.getConf(filename)
@@ -119,7 +130,10 @@ object HDFSOperation1 {
       fs.close()
     }
   }
-  def mkdirs(filename:String):Boolean={
+
+  def mkdirs (filename0: String): Boolean = {
+    val filename = HDFSConfUtil.formatFilename(filename0)
+
     val uri=URI.create(filename)
     val path=new Path(uri)
     val conf=HDFSConfUtil.getConf(filename)
@@ -133,15 +147,51 @@ object HDFSOperation1 {
     }
   }
 
-  def delete(filename:String): Boolean ={
+  def delete (filename0: String): Boolean = {
+    val filename = HDFSConfUtil.formatFilename(filename0)
+
+    val uri = URI.create(filename)
+    val path = new Path(uri)
+    val conf = HDFSConfUtil.getConf(filename)
+    val fs = FileSystem.get(uri, conf)
+    fs.delete(path, false)
+    //    fs.deleteOnExit(path)
+  }
+
+  def deleteforce (filename0: String): Boolean = {
+    val filename = HDFSConfUtil.formatFilename(filename0)
+
     val uri=URI.create(filename)
     val path=new Path(uri)
     val conf=HDFSConfUtil.getConf(filename)
     val fs=FileSystem.get(uri,conf)
-    fs.deleteOnExit(path)
+    fs.delete(path, true)
+    //    fs.deleteOnExit(path)
   }
 
-  def renamefile (from_filename: String, to_filename: String, cover: Boolean = true): Boolean = {
+  //  def delete(filename0:String,times:Int): Boolean ={
+  //    var flag=false
+  //    for(i<- 0 until times-1){
+  //      flag={
+  //        this.delete(filename0)
+  //      }
+  //      if(flag ){
+  //        val msg="delete.times="+times+";i="+i
+  //        PropertiesUtil.log.info(msg)
+  //        return flag
+  //      }
+  //    }
+  //    if(!flag){
+  //      val msg="无法删除,ilename0="+filename0+";times="+times
+  //      PropertiesUtil.log.info(msg)
+  //    }
+  //    flag
+  //  }
+
+  def renamefile (from_filename0: String, to_filename0: String, cover: Boolean = true): Boolean = {
+    val from_filename = HDFSConfUtil.formatFilename(from_filename0)
+    val to_filename = HDFSConfUtil.formatFilename(to_filename0)
+
     if ((HDFSConfUtil.isLocal(from_filename) && HDFSConfUtil.isLocal(to_filename)) || (!HDFSConfUtil.isLocal(from_filename) && !HDFSConfUtil.isLocal(to_filename))) {
       val from_uri = URI.create(from_filename)
       val from_path = new Path(from_uri)
@@ -151,14 +201,40 @@ object HDFSOperation1 {
       val to_conf = HDFSConfUtil.getConf(to_filename)
       val to_fs = FileSystem.get(to_uri, to_conf)
 
-      to_fs.rename(from_path, to_path)
+      if (to_fs.exists(to_path)) {
+        if (cover) {
+          val flag0 = this.delete(to_filename)
+          val msg = "删除原有数据:" + flag0 + ";to_path=" + to_path.toString
+          PropertiesUtil.log.info(msg)
+        } else {
+          val msg = "HDFSOperation1.rename 失败。cover=" + cover
+          PropertiesUtil.log.warn(msg)
+        }
+      }
+
+      val flag = to_fs.rename(from_path, to_path)
+      if (!flag) {
+        val msg = "HDFSOperation1.rename 失败"
+        PropertiesUtil.log.warn(msg)
+      } else {
+        val msg = "renamefile:from_filename(" + from_filename + ")-->to_filename(" + to_filename + ");cover=" + cover
+        PropertiesUtil.log.info(msg)
+      }
+      flag
+
     } else {
+      val msg = "HDFSOperation1.rename 处于两个文件系统,通过copyfile实现,from_filename(" + from_filename + ")-->to_filename(" + to_filename + ");cover=" + cover
+      PropertiesUtil.log.warn(msg)
       this.copyfile(from_filename, to_filename, false, true)
     }
 
   }
 
-  def movefile (from_filename: String, to_filename: String, overwrite: Boolean, deleteSource: Boolean): Boolean = {
+  def movefile (from_filename0: String, to_filename0: String, overwrite: Boolean, deleteSource: Boolean): Boolean = {
+    val from_filename = HDFSConfUtil.formatFilename(from_filename0)
+    val to_filename = HDFSConfUtil.formatFilename(to_filename0)
+
+
     val buffersize: Int = 4096
 
     val from_uri = URI.create(from_filename)
@@ -209,20 +285,23 @@ object HDFSOperation1 {
   }
 
   def copyfile (from_filename0: String, to_filename0: String, overwrite: Boolean = false, deleteSource: Boolean = false): Boolean = {
-    val from_filename = {
-      if (HDFSConfUtil.isLocal(from_filename0) && !from_filename0.startsWith("file://")) {
-        "file://" + from_filename0
-      } else {
-        from_filename0
-      }
-    }
-    val to_filename = {
-      if (HDFSConfUtil.isLocal(to_filename0) && !to_filename0.startsWith("file://")) {
-        "file://" + to_filename0
-      } else {
-        to_filename0
-      }
-    }
+    //    val from_filename = {
+    //      if (HDFSConfUtil.isLocal(from_filename0) && !from_filename0.startsWith("file://")) {
+    //        "file://" + from_filename0
+    //      } else {
+    //        from_filename0
+    //      }
+    //    }
+    //    val to_filename = {
+    //      if (HDFSConfUtil.isLocal(to_filename0) && !to_filename0.startsWith("file://")) {
+    //        "file://" + to_filename0
+    //      } else {
+    //        to_filename0
+    //      }
+    //    }
+
+    val from_filename = HDFSConfUtil.formatFilename(from_filename0)
+    val to_filename = HDFSConfUtil.formatFilename(to_filename0)
 
     PropertiesUtil.log.info("copyfile:from_filename(" + from_filename + ")-->to_filename(" + to_filename + ");overwrite=" + overwrite + ";deleteSource=" + deleteSource)
 
@@ -367,10 +446,11 @@ object HDFSOperation1 {
   }
 
   def main(args:Array[String]): Unit ={
-    //    val from_filename:String=args(0)
-    //    val to_filename:String=args(1)
-    //    val flag=this.copyfile(from_filename,to_filename,true)
-    //    println(flag)
+    val from_filename: String = args(0)
+    val to_filename: String = args(1)
+    val cover = args(2).toBoolean
+    val flag = this.renamefile(from_filename, to_filename, cover)
+    println(flag)
 
     //    val flag0=this.delete(args(0))
     //    println(flag0)
@@ -381,8 +461,8 @@ object HDFSOperation1 {
     //    this.isLocal(args(0))
     //    this.isLocal(args(1))
 
-    val path=args(0)
-    val childern:ListBuffer[String]=this.listChildrenAbsoluteFile(path)
-    childern.foreach(f=>println(f))
+    //    val path=args(0)
+    //    val childern:ListBuffer[String]=this.listChildrenAbsoluteFile(path)
+    //    childern.foreach(f=>println(f))
   }
 }

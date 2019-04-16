@@ -54,7 +54,9 @@ object HDFSReadWriteUtil {
   //    }
   //  }
 
-  private def writeTXT1(fileName:String, contents:Array[String],append:Boolean): Boolean ={
+  private def writeTXT1 (fileName0: String, contents: Array[String], append: Boolean): Boolean = {
+    val fileName = HDFSConfUtil.formatFilename(fileName0)
+
     if(HDFSConfUtil.isLocal(fileName)){
       val file=new File(fileName)
       val fw:FileWriter=new FileWriter(file,append)
@@ -75,10 +77,10 @@ object HDFSReadWriteUtil {
           fw.close()
         }
       }
-//      if(flag0){
-//        val fileNamecrc=file.getParent+"/."+file.getName+".crc"
-//        HDFSOperation1.delete(fileNamecrc)
-//      }
+      //      if(flag0){
+      //        val fileNamecrc=file.getParent+"/."+file.getName+".crc"
+      //        HDFSOperation1.delete(fileNamecrc)
+      //      }
 
       flag0
     }else{
@@ -137,7 +139,8 @@ object HDFSReadWriteUtil {
       }
     }
   }
-  private def writeTXT1(fileName:String, content:String,append:Boolean):Boolean=this.writeTXT1(fileName,Array(content),append)
+
+  private def writeTXT1 (fileName0: String, content: String, append: Boolean): Boolean = this.writeTXT1(fileName0, Array(content), append)
 
   def readTXT(filename: String): Array[String] = {
     if(HDFSFile.fileempty(filename)){
@@ -197,11 +200,34 @@ object HDFSReadWriteUtil {
     this.addHDFSfile(fileName,Array(conent))
   }*/
 
+  private def writeTXT2 (filename0: String, contents: Array[String], append: Boolean): Boolean = {
+    val fileName = HDFSConfUtil.formatFilename(filename0)
+    val fw = HDFSFile.filterWriter(fileName, append)
+    val pw: PrintWriter = new PrintWriter(fw)
+    try {
+      contents.foreach(content => pw.println(content))
+      pw.flush( )
+      fw.flush( )
+      true
+    } catch {
+      case e: Exception => {
+        false
+      }
+    } finally {
+      pw.close( )
+      fw.close( )
+    }
+  }
+
+  private def writeTXT2 (filename0: String, content: String, append: Boolean): Boolean = {
+    this.writeTXT2(filename0, Array(content), append)
+  }
 
   def main(args:Array[String]): Unit ={
-    val fileName="/D:/tmp/20190329.dat"
-    val content="f1b6be3dc7f8c87146b857317a322e9e,file:/D:/tmp/Stream/Obs/20190329/1553703693_201903280000.txt"
+    val fileName = args(0)
+    val content = args(1)
+    val append = args(2).toBoolean
 
-    HDFSReadWriteUtil.writeTXT(fileName,content,true)
+    HDFSReadWriteUtil.writeTXT2(fileName, content, append)
   }
 }
