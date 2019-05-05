@@ -2,21 +2,62 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.weather.bigdata.it.utils</groupId>
     <artifactId>felixfun</artifactId>
-    <version>0.0.1-felix</version>
+    <version>0.0.1-SNAPSHOT</version>
+    <!--<version>0.0.1-felix</version>-->
+    <packaging>jar</packaging>
+
     <inceptionYear>2008</inceptionYear>
+
+
+    <!--<modules>-->
+    <!--<module>distribution_repository</module>-->
+    <!--</modules>-->
+
+
     <properties>
         <scala.version>2.11.8</scala.version>
         <fast.json.version>1.2.20</fast.json.version>
         <hadoop.version>2.6.5</hadoop.version>
         <log4j.version>1.2.17</log4j.version>
+        <urlstable>http://220.243.129.233:9090/archiva/repository</urlstable>
         <!--<commons.lang3.version>3.1</commons.lang3.version>-->
     </properties>
+
+
+
+
+    <distributionManagement>
+        <repository>
+            <id>internal</id>
+            <name>Internal Release Repository</name>
+            <url>${urlstable}/internal/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Internal Snapshot Repository</name>
+            <url>${urlstable}/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <repositories>
         <repository>
             <id>scala-tools.org</id>
             <name>Scala-Tools Maven2 Repository</name>
             <url>http://scala-tools.org/repo-releases</url>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <url>${urlstable}/snapshots/</url>
+        </repository>
+        <repository>
+            <id>internal</id>
+            <url>${urlstable}/internal/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -48,11 +89,12 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>log4j</groupId>-->
+        <!--<artifactId>log4j</artifactId>-->
+        <!--<version>${log4j.version}</version>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -137,24 +179,24 @@
                 </configuration>
             </plugin>
             <!--将依赖包复制出-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>
-                                ${project.build.directory}/${artifactId}_libs/
-                            </outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-dependency-plugin</artifactId>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>copy-dependencies</id>-->
+            <!--<phase>prepare-package</phase>-->
+            <!--<goals>-->
+            <!--<goal>copy-dependencies</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<outputDirectory>-->
+            <!--${project.build.directory}/${artifactId}_libs/-->
+            <!--</outputDirectory>-->
+            <!--</configuration>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--</plugin>-->
 
 
             <!--将依赖注入jar包内-->

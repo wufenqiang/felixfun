@@ -3,8 +3,10 @@ package com.weather.bigdata.it.utils.hdfsUtil
 import java.io._
 import java.net.URI
 
+import com.weather.bigdata.it.utils.PropertiesUtil
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.hadoop.fs.{FSDataInputStream, FSDataOutputStream, FileSystem, Path}
+import org.apache.hadoop.io.IOUtils
 
 object HDFSFile {
 
@@ -79,14 +81,27 @@ object HDFSFile {
   def filterWriter (filename0: String, append: Boolean): Writer = {
     val filename = HDFSConfUtil.formatFilename(filename0)
     if (HDFSConfUtil.isLocal(filename)) {
-      val filename1 = {
-        if (filename.startsWith("file://")) {
-          filename.split("file://").last
+      val uri = URI.create(filename)
+      val path = new Path(uri)
+      val conf = HDFSConfUtil.getConf(filename)
+      val fs = FileSystem.get(uri, conf)
+
+      val filename1: String = path.toString
+
+      val filename2 = {
+        if (filename1.startsWith("file://")) {
+          filename1.split("file://").last
+        }else if(filename1.startsWith("file:/")){
+          filename1.split("file:/").last
         } else {
-          filename
+          filename1
         }
       }
-      val filewriter: FileWriter = new FileWriter(filename1, append)
+
+      val file1=new File("/"+filename2)
+
+
+      val filewriter: FileWriter = new FileWriter(file1, append)
       filewriter
     } else {
       val buffersize: Int = 4096
@@ -111,8 +126,42 @@ object HDFSFile {
     }
   }
 
+  def fileWriter(is:InputStream,filename0: String, overwrite: Boolean): Boolean ={
+    val buffersize:Int=4096
+
+    val filename = HDFSConfUtil.formatFilename(filename0)
+    val uri = URI.create(filename)
+    val path = new Path(uri)
+    val conf = HDFSConfUtil.getConf(filename)
+    val fs = FileSystem.get(uri, conf)
+    val os: FSDataOutputStream = {
+      try {
+        fs.create(path, overwrite, buffersize)
+      } catch {
+        case e: Exception => {
+          val e0 = new Exception("overwrite=" + overwrite + ";" + e)
+          throw e0
+        }
+      }
+    }
+
+    try {
+      IOUtils.copyBytes(is, os, buffersize, true)
+      true
+    } catch {
+      case e: Exception => {
+        PropertiesUtil.log.error(e)
+        false
+      }
+    } finally {
+      is.close
+      os.close
+      fs.close
+    }
+  }
+
   def main(args:Array[String]): Unit ={
-    val filename=args(0)
-    println(this.fileMD5(filename))
+    val filename="/ser/logs/platform/sparksubmit/logs/sparksubmit_Detail/20190503/1556856664410.txt"
+    println(this.filterWriter(filename,true))
   }
 }

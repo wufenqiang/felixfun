@@ -10,11 +10,32 @@ object HDFSConfUtil {
   private val log:Logger=Logger.getRootLogger
 
   def formatFilename (filename0: String): String = {
-    if (HDFSConfUtil.isLocal(filename0) && !filename0.startsWith("file://")) {
-      "file://" + filename0
-    } else {
-      filename0
+//    if(HDFSConfUtil.isLocal(filename0)){
+//
+//    }else{
+//
+//    }
+    val filename1:String={
+      if (HDFSConfUtil.isLocal(filename0) && !filename0.startsWith("file")) {
+        "file:/" + new Path(filename0).toString
+      } else {
+        filename0
+      }
     }
+    val filename2:String={
+      if(filename1.startsWith("file://")) {
+        filename1.replace("file://", "file:/")
+      }else if(filename1.startsWith("file:///")){
+        filename1.replace("file:///","file:/")
+      }else{
+        filename1
+      }
+    }
+    val path2=new Path(filename2)
+    val filename3=path2.toString
+//    println("formatFilename:"+filename0+"->"+filename3)
+    filename3
+//    filename2
   }
 
   def isLocal(filepath:Path): Boolean ={
@@ -63,15 +84,6 @@ object HDFSConfUtil {
   def isLocal (filename: String): Boolean = {
     val uri = URI.create(filename)
     val flag = this.isLocal(uri)
-    //    val urigetScheme:String=uri.getScheme
-    //    val flag:Boolean={
-    //      if(urigetScheme==null || urigetScheme.equals("file")){
-    //        true
-    //      }else{
-    //        false
-    //      }
-    //    }
-
     flag
   }
 
@@ -87,4 +99,9 @@ object HDFSConfUtil {
   //    }
   //    conf0
   //  }
+//  def main(args:Array[String]): Unit ={
+//    val tmpfile="hdfs://sdlfaj/sdjflask//sdlfkjasldf/"
+//    val path=new Path(tmpfile)
+//    println(path.toString)
+//  }
 }

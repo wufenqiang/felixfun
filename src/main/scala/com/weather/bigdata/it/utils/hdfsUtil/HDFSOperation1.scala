@@ -25,7 +25,7 @@ object HDFSOperation1 {
     val filesStatus = fs.listStatus(path)
     for(status <- filesStatus){
       val filePath : Path = status.getPath
-      if(fs.isFile(path))
+      if(fs.isFile(filePath))
         holder += filePath.toString
       else
         listChildrenAbsoluteFile(filePath.toString,holder)
@@ -45,7 +45,7 @@ object HDFSOperation1 {
     val filesStatus = fs.listStatus(path)
     for(status <- filesStatus){
       val filePath : Path = status.getPath
-      if(fs.isFile(path))
+      if(fs.isFile(filePath))
         holder += filePath
       else
         listChildrenAbsoluteFilePath(filePath.toString,holder)
@@ -139,6 +139,7 @@ object HDFSOperation1 {
     val conf=HDFSConfUtil.getConf(filename)
     val fs=FileSystem.get(uri,conf)
     if(!fs.exists(path)){
+//      fs.mkdirs(path,permission.FsPermission)
       fs.mkdirs(path)
     }else{
       val msg="文件已存在"+filename+";默认mkdir返回true"
@@ -154,7 +155,8 @@ object HDFSOperation1 {
     val path = new Path(uri)
     val conf = HDFSConfUtil.getConf(filename)
     val fs = FileSystem.get(uri, conf)
-    fs.delete(path, false)
+//    fs.delete(path, false)
+    fs.delete(path,true)
     //    fs.deleteOnExit(path)
   }
 
@@ -397,6 +399,19 @@ object HDFSOperation1 {
             } finally {
               from_in.close( )
               to_out.close( )
+            }
+          }else if(from_fs.isDirectory(from_path) && to_fs.isDirectory(to_path)){
+            val from_files:ListBuffer[String]=this.listChildrenAbsoluteFile(from_filename)
+//            val to_files=this.listChildrenAbsoluteFile(to_filename)
+            if(from_files.isEmpty){
+              val msg="源地址("+from_filename+")数据为空"
+              PropertiesUtil.log.warn(msg)
+              true
+            }else{
+              from_files.map(from_file=>{
+                val to_file:String=from_file.replace(from_filename,to_filename)
+                this.copyfile(from_file,to_file,overwrite,deleteSource)
+              }).reduce((x,y)=>(x && y))
             }
           } else {
             val msg="源地址("+from_filename+"),目标地址("+to_filename+"),暂不支持该类复制"
