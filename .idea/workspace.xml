@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e5082f17-8e49-4f6f-a181-2bdb24933fb7" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change beforePath="$PROJECT_DIR$/felixfun.iml" afterPath="$PROJECT_DIR$/felixfun.iml" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/com/weather/bigdata/it/utils/hdfsUtil/HDFSConfUtil.scala" afterPath="$PROJECT_DIR$/src/main/scala/com/weather/bigdata/it/utils/hdfsUtil/HDFSConfUtil.scala" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/com/weather/bigdata/it/utils/hdfsUtil/HDFSFile.scala" afterPath="$PROJECT_DIR$/src/main/scala/com/weather/bigdata/it/utils/hdfsUtil/HDFSFile.scala" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/com/weather/bigdata/it/utils/hdfsUtil/HDFSOperation1.scala" afterPath="$PROJECT_DIR$/src/main/scala/com/weather/bigdata/it/utils/hdfsUtil/HDFSOperation1.scala" />
-    </list>
+    <list default="true" id="e5082f17-8e49-4f6f-a181-2bdb24933fb7" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/models_distribution_repository/target/" />
